@@ -454,7 +454,7 @@ const MemberDetails = () => {
 
       <section className="max-w-7xl mx-auto px-5 pb-24">
 
-        <div className="bg-gradient-to-r from-cyan-600 to-blue-600 rounded-3xl p-10 md:p-16 text-center">
+        <div className="bg-linear-to-r from-cyan-600 to-blue-600 rounded-3xl p-10 md:p-16 text-center">
 
           <h2 className="text-4xl md:text-5xl font-bold">
 

@@ -169,7 +169,7 @@ const Footer = () => {
 
           <p className="text-gray-500 text-center">
 
-            Designed with ❤️ using React & Tailwind CSS
+            Designed By R_Hasan
 
           </p>
 
