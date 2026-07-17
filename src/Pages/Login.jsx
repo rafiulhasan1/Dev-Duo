@@ -1,47 +1,81 @@
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../Provider/AuthProvider";
 import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
 
 const Login = () => {
-  const { login, googleLogin } = useContext(AuthContext);
-
-  const [showPassword, setShowPassword] = useState(false);
+  const {
+    login,
+    googleLogin,
+    resetPassword,
+  } = useContext(AuthContext);
 
   const navigate = useNavigate();
   const location = useLocation();
 
   const from = location.state || "/";
 
-  const handleLogin = (e) => {
+  const emailRef = useRef();
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const handleLogin = async (e) => {
     e.preventDefault();
+
+    setError("");
+    setSuccess("");
 
     const form = e.target;
 
     const email = form.email.value;
     const password = form.password.value;
 
-    login(email, password)
-      .then(() => {
-        navigate(from);
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
+    try {
+      await login(email, password);
+
+      navigate(from);
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
-  const handleGoogleLogin = () => {
-    googleLogin()
-      .then(() => {
-        navigate(from);
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
+  const handleGoogleLogin = async () => {
+    setError("");
+
+    try {
+      await googleLogin();
+
+      navigate(from);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    setError("");
+    setSuccess("");
+
+    const email = emailRef.current.value.trim();
+
+    if (!email) {
+      return setError("Please enter your email first.");
+    }
+
+    try {
+      await resetPassword(email);
+
+      setSuccess(
+        "Password reset email has been sent. Please check your inbox."
+      );
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex justify-center items-center px-5">
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-5">
 
       <div className="w-full max-w-md bg-slate-900 rounded-3xl shadow-2xl p-8">
 
@@ -53,38 +87,73 @@ const Login = () => {
           Login to continue
         </p>
 
-        <form onSubmit={handleLogin} className="mt-8 space-y-5">
+        <form
+          onSubmit={handleLogin}
+          className="space-y-5 mt-8"
+        >
 
           <input
-            name="email"
+            ref={emailRef}
             type="email"
-            placeholder="Email"
+            name="email"
             required
-            className="w-full p-4 rounded-xl bg-slate-800 text-white outline-none"
+            placeholder="Email Address"
+            className="w-full p-4 rounded-xl bg-slate-800 text-white outline-none border border-slate-700 focus:border-cyan-400"
           />
 
           <div className="relative">
 
             <input
-              name="password"
               type={showPassword ? "text" : "password"}
-              placeholder="Password"
+              name="password"
               required
-              className="w-full p-4 rounded-xl bg-slate-800 text-white outline-none"
+              placeholder="Password"
+              className="w-full p-4 rounded-xl bg-slate-800 text-white outline-none border border-slate-700 focus:border-cyan-400"
             />
 
             <button
               type="button"
-              onClick={() => setShowPassword(!showPassword)}
+              onClick={() =>
+                setShowPassword(!showPassword)
+              }
               className="absolute right-5 top-5 text-gray-400"
             >
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
+              {showPassword ? (
+                <FaEyeSlash />
+              ) : (
+                <FaEye />
+              )}
             </button>
 
           </div>
 
+          <div className="text-right">
+
+            <button
+              type="button"
+              onClick={handleForgotPassword}
+              className="text-cyan-400 hover:underline text-sm"
+            >
+              Forgot Password?
+            </button>
+
+          </div>
+
+          {error && (
+            <p className="text-red-500 text-sm">
+              {error}
+            </p>
+          )}
+
+          {success && (
+            <p className="text-green-500 text-sm">
+              {success}
+            </p>
+          )}
+
           <button
-            className="w-full bg-cyan-500 hover:bg-cyan-600 text-white py-4 rounded-xl font-semibold"
+            type="submit"
+            className="w-full bg-cyan-500 hover:bg-cyan-600 text-white py-4 rounded-xl font-semibold transition"
           >
             Login
           </button>
@@ -93,7 +162,7 @@ const Login = () => {
 
         <button
           onClick={handleGoogleLogin}
-          className="w-full mt-5 border border-cyan-500 text-white py-4 rounded-xl flex justify-center items-center gap-3 hover:bg-cyan-500"
+          className="w-full mt-5 border border-cyan-500 py-4 rounded-xl text-white flex justify-center items-center gap-3 hover:bg-cyan-500 transition"
         >
           <FaGoogle />
           Continue with Google

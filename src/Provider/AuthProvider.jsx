@@ -1,6 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { getFirestore, doc, setDoc, serverTimestamp } from "firebase/firestore";
-import app from "../firebase/firebase.config";
+
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -18,45 +17,36 @@ export const AuthContext = createContext();
 
 const googleProvider = new GoogleAuthProvider();
 
-const db = getFirestore(app);
-
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-
   const [loading, setLoading] = useState(true);
 
   // Register
-
   const createUser = (email, password) => {
     return createUserWithEmailAndPassword(auth, email, password);
   };
 
   // Login
-
   const login = (email, password) => {
     return signInWithEmailAndPassword(auth, email, password);
   };
 
   // Google Login
-
   const googleLogin = () => {
     return signInWithPopup(auth, googleProvider);
   };
 
   // Forgot Password
-
   const resetPassword = (email) => {
     return sendPasswordResetEmail(auth, email);
   };
 
   // Update Profile
-
   const updateUser = (data) => {
     return updateProfile(auth.currentUser, data);
   };
 
   // Logout
-
   const logout = () => {
     return signOut(auth);
   };
@@ -64,7 +54,6 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-
       setLoading(false);
     });
 
