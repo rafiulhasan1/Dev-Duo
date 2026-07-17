@@ -4,187 +4,197 @@ import { AuthContext } from "../Provider/AuthProvider";
 import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
 
 const Login = () => {
-  const {
-    login,
-    googleLogin,
-    resetPassword,
-  } = useContext(AuthContext);
+    const {
+        login,
+        googleLogin,
+        resetPassword,
+        logout,
+    } = useContext(AuthContext);
 
-  const navigate = useNavigate();
-  const location = useLocation();
+    const navigate = useNavigate();
+    const location = useLocation();
 
-  const from = location.state || "/";
+    const from = location.state || "/";
 
-  const emailRef = useRef();
+    const emailRef = useRef();
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+    const handleLogin = async (e) => {
+        e.preventDefault();
 
-    setError("");
-    setSuccess("");
+        setError("");
+        setSuccess("");
 
-    const form = e.target;
+        const form = e.target;
 
-    const email = form.email.value;
-    const password = form.password.value;
+        const email = form.email.value;
+        const password = form.password.value;
 
-    try {
-      await login(email, password);
+        try {
+            const result = await login(email, password);
 
-      navigate(from);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
+            if (!result.user.emailVerified) {
 
-  const handleGoogleLogin = async () => {
-    setError("");
+                alert("Please verify your email first.");
 
-    try {
-      await googleLogin();
+                await logout();
 
-      navigate(from);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
+                return;
+            }
 
-  const handleForgotPassword = async () => {
-    setError("");
-    setSuccess("");
+            navigate(from);
+        } catch (err) {
+            setError(err.message);
+        }
+    };
 
-    const email = emailRef.current.value.trim();
+    const handleGoogleLogin = async () => {
+        setError("");
 
-    if (!email) {
-      return setError("Please enter your email first.");
-    }
+        try {
+            await googleLogin();
 
-    try {
-      await resetPassword(email);
+            navigate(from);
+        } catch (err) {
+            setError(err.message);
+        }
+    };
 
-      setSuccess(
-        "Password reset email has been sent. Please check your inbox."
-      );
-    } catch (err) {
-      setError(err.message);
-    }
-  };
+    const handleForgotPassword = async () => {
+        setError("");
+        setSuccess("");
 
-  return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-5">
+        const email = emailRef.current.value.trim();
 
-      <div className="w-full max-w-md bg-slate-900 rounded-3xl shadow-2xl p-8">
+        if (!email) {
+            return setError("Please enter your email first.");
+        }
 
-        <h1 className="text-4xl font-bold text-center text-white">
-          Welcome Back
-        </h1>
+        try {
+            await resetPassword(email);
 
-        <p className="text-center text-gray-400 mt-3">
-          Login to continue
-        </p>
+            setSuccess(
+                "Password reset email has been sent. Please check your inbox."
+            );
+        } catch (err) {
+            setError(err.message);
+        }
+    };
 
-        <form
-          onSubmit={handleLogin}
-          className="space-y-5 mt-8"
-        >
+    return (
+        <div className="min-h-screen bg-slate-950 flex items-center justify-center px-5">
 
-          <input
-            ref={emailRef}
-            type="email"
-            name="email"
-            required
-            placeholder="Email Address"
-            className="w-full p-4 rounded-xl bg-slate-800 text-white outline-none border border-slate-700 focus:border-cyan-400"
-          />
+            <div className="w-full max-w-md bg-slate-900 rounded-3xl shadow-2xl p-8">
 
-          <div className="relative">
+                <h1 className="text-4xl font-bold text-center text-white">
+                    Welcome Back
+                </h1>
 
-            <input
-              type={showPassword ? "text" : "password"}
-              name="password"
-              required
-              placeholder="Password"
-              className="w-full p-4 rounded-xl bg-slate-800 text-white outline-none border border-slate-700 focus:border-cyan-400"
-            />
+                <p className="text-center text-gray-400 mt-3">
+                    Login to continue
+                </p>
 
-            <button
-              type="button"
-              onClick={() =>
-                setShowPassword(!showPassword)
-              }
-              className="absolute right-5 top-5 text-gray-400"
-            >
-              {showPassword ? (
-                <FaEyeSlash />
-              ) : (
-                <FaEye />
-              )}
-            </button>
+                <form
+                    onSubmit={handleLogin}
+                    className="space-y-5 mt-8"
+                >
 
-          </div>
+                    <input
+                        ref={emailRef}
+                        type="email"
+                        name="email"
+                        required
+                        placeholder="Email Address"
+                        className="w-full p-4 rounded-xl bg-slate-800 text-white outline-none border border-slate-700 focus:border-cyan-400"
+                    />
 
-          <div className="text-right">
+                    <div className="relative">
 
-            <button
-              type="button"
-              onClick={handleForgotPassword}
-              className="text-cyan-400 hover:underline text-sm"
-            >
-              Forgot Password?
-            </button>
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            required
+                            placeholder="Password"
+                            className="w-full p-4 rounded-xl bg-slate-800 text-white outline-none border border-slate-700 focus:border-cyan-400"
+                        />
 
-          </div>
+                        <button
+                            type="button"
+                            onClick={() =>
+                                setShowPassword(!showPassword)
+                            }
+                            className="absolute right-5 top-5 text-gray-400"
+                        >
+                            {showPassword ? (
+                                <FaEyeSlash />
+                            ) : (
+                                <FaEye />
+                            )}
+                        </button>
 
-          {error && (
-            <p className="text-red-500 text-sm">
-              {error}
-            </p>
-          )}
+                    </div>
 
-          {success && (
-            <p className="text-green-500 text-sm">
-              {success}
-            </p>
-          )}
+                    <div className="text-right">
 
-          <button
-            type="submit"
-            className="w-full bg-cyan-500 hover:bg-cyan-600 text-white py-4 rounded-xl font-semibold transition"
-          >
-            Login
-          </button>
+                        <button
+                            type="button"
+                            onClick={handleForgotPassword}
+                            className="text-cyan-400 hover:underline text-sm"
+                        >
+                            Forgot Password?
+                        </button>
 
-        </form>
+                    </div>
 
-        <button
-          onClick={handleGoogleLogin}
-          className="w-full mt-5 border border-cyan-500 py-4 rounded-xl text-white flex justify-center items-center gap-3 hover:bg-cyan-500 transition"
-        >
-          <FaGoogle />
-          Continue with Google
-        </button>
+                    {error && (
+                        <p className="text-red-500 text-sm">
+                            {error}
+                        </p>
+                    )}
 
-        <p className="text-center text-gray-400 mt-8">
+                    {success && (
+                        <p className="text-green-500 text-sm">
+                            {success}
+                        </p>
+                    )}
 
-          Don't have an account?
+                    <button
+                        type="submit"
+                        className="w-full bg-cyan-500 hover:bg-cyan-600 text-white py-4 rounded-xl font-semibold transition"
+                    >
+                        Login
+                    </button>
 
-          <Link
-            to="/register"
-            className="text-cyan-400 ml-2"
-          >
-            Register
-          </Link>
+                </form>
 
-        </p>
+                <button
+                    onClick={handleGoogleLogin}
+                    className="w-full mt-5 border border-cyan-500 py-4 rounded-xl text-white flex justify-center items-center gap-3 hover:bg-cyan-500 transition"
+                >
+                    <FaGoogle />
+                    Continue with Google
+                </button>
 
-      </div>
+                <p className="text-center text-gray-400 mt-8">
 
-    </div>
-  );
+                    Don't have an account?
+
+                    <Link
+                        to="/register"
+                        className="text-cyan-400 ml-2"
+                    >
+                        Register
+                    </Link>
+
+                </p>
+
+            </div>
+
+        </div>
+    );
 };
 
 export default Login;

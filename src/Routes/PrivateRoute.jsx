@@ -15,7 +15,7 @@ const PrivateRoute = ({ children }) => {
     );
   }
 
-  if (user) {
+  if (user && user.emailVerified) {
     return children;
   }
 

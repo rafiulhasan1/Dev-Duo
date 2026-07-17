@@ -3,231 +3,236 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
 import { AuthContext } from "../Provider/AuthProvider";
 import {
-    doc,
-    setDoc,
-    serverTimestamp,
-    getFirestore,
-    getDoc,
+  doc,
+  setDoc,
+  serverTimestamp,
+  getFirestore,
+  getDoc,
 } from "firebase/firestore";
 import app from "../firebase/firebase.config";
 
 const db = getFirestore(app);
 
 const Register = () => {
-    const { createUser, googleLogin, updateUser } =
-        useContext(AuthContext);
+  const {
+    createUser,
+    googleLogin,
+    updateUser,
+    verifyEmail,
+    logout,
+  } = useContext(AuthContext);
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
 
-    const handleRegister = async (e) => {
-        e.preventDefault();
+  const handleRegister = async (e) => {
+    e.preventDefault();
 
-        setError("");
+    setError("");
 
-        const form = e.target;
+    const form = e.target;
 
-        const name = form.name.value.trim();
-        const email = form.email.value.trim();
-        const password = form.password.value;
-        const confirmPassword = form.confirmPassword.value;
+    const name = form.name.value.trim();
+    const email = form.email.value.trim();
+    const password = form.password.value;
+    const confirmPassword = form.confirmPassword.value;
 
-        if (password !== confirmPassword) {
-            return setError("Passwords do not match.");
-        }
+    // Validation
+    if (password !== confirmPassword) {
+      return setError("Passwords do not match.");
+    }
 
-        if (password.length < 8) {
-            return setError("Password must be at least 8 characters.");
-        }
+    if (password.length < 8) {
+      return setError("Password must be at least 8 characters.");
+    }
 
-        if (!/[A-Z]/.test(password)) {
-            return setError("Password must contain one uppercase letter.");
-        }
+    if (!/[A-Z]/.test(password)) {
+      return setError("Password must contain one uppercase letter.");
+    }
 
-        if (!/[a-z]/.test(password)) {
-            return setError("Password must contain one lowercase letter.");
-        }
+    if (!/[a-z]/.test(password)) {
+      return setError("Password must contain one lowercase letter.");
+    }
 
-        if (!/[0-9]/.test(password)) {
-            return setError("Password must contain one number.");
-        }
+    if (!/[0-9]/.test(password)) {
+      return setError("Password must contain one number.");
+    }
 
-        if (!/[!@#$%^&*]/.test(password)) {
-            return setError("Password must contain one special character.");
-        }
+    if (!/[!@#$%^&*]/.test(password)) {
+      return setError("Password must contain one special character.");
+    }
 
-        try {
-            const result = await createUser(email, password);
+    try {
+      // Create User
+      const result = await createUser(email, password);
 
-            await updateUser({
-                displayName: name,
-            });
+      // Update Firebase Profile
+      await updateUser({
+        displayName: name,
+      });
 
-            await setDoc(doc(db, "users", result.user.uid), {
-                uid: result.user.uid,
-                name: name,
-                email: email,
-                phone: "",
-                bio: "",
-                github: "",
-                linkedin: "",
-                facebook: "",
-                website: "",
-                photoURL: "",
-                role: "user",
-                createdAt: serverTimestamp(),
-                lastLogin: serverTimestamp(),
-            });
+      // Save User to Firestore
+      await setDoc(doc(db, "users", result.user.uid), {
+        uid: result.user.uid,
+        name,
+        email,
+        phone: "",
+        bio: "",
+        github: "",
+        linkedin: "",
+        facebook: "",
+        website: "",
+        photoURL: "",
+        role: "user",
+        createdAt: serverTimestamp(),
+        lastLogin: serverTimestamp(),
+      });
 
-            navigate("/");
-        } catch (err) {
-            setError(err.message);
-        }
-    };
+      // Send Verification Email
+      await verifyEmail();
 
-    const handleGoogleRegister = async () => {
-        try {
-            const result = await googleLogin();
+      // Logout User
+      await logout();
 
-            const user = result.user;
+      alert(
+        "Registration successful!\n\nA verification email has been sent.\nPlease verify your email before logging in."
+      );
 
-            const userRef = doc(db, "users", user.uid);
+      navigate("/login", { replace: true });
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
-            const snap = await getDoc(userRef);
+  const handleGoogleRegister = async () => {
+    try {
+      const result = await googleLogin();
 
-            if (!snap.exists()) {
-                await setDoc(userRef, {
-                    uid: user.uid,
-                    name: user.displayName || "",
-                    email: user.email,
-                    phone: "",
-                    bio: "",
-                    github: "",
-                    linkedin: "",
-                    facebook: "",
-                    website: "",
-                    photoURL: user.photoURL || "",
-                    role: "user",
-                    createdAt: serverTimestamp(),
-                    lastLogin: serverTimestamp(),
-                });
-            }
+      const user = result.user;
 
-            navigate("/");
-        } catch (err) {
-            setError(err.message);
-        }
-    };
+      const userRef = doc(db, "users", user.uid);
 
-    return (
-        <div className="min-h-screen bg-slate-950 flex justify-center items-center px-5">
+      const snap = await getDoc(userRef);
 
-            <div className="w-full max-w-md bg-slate-900 rounded-3xl p-8 shadow-2xl">
+      if (!snap.exists()) {
+        await setDoc(userRef, {
+          uid: user.uid,
+          name: user.displayName || "",
+          email: user.email,
+          phone: "",
+          bio: "",
+          github: "",
+          linkedin: "",
+          facebook: "",
+          website: "",
+          photoURL: user.photoURL || "",
+          role: "user",
+          createdAt: serverTimestamp(),
+          lastLogin: serverTimestamp(),
+        });
+      }
 
-                <h1 className="text-4xl text-center text-white font-bold">
-                    Create Account
-                </h1>
+      navigate("/");
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
-                <p className="text-center text-gray-400 mt-2">
-                    Register to access the portfolio
-                </p>
+  return (
+    <div className="min-h-screen bg-slate-950 flex justify-center items-center px-5">
+      <div className="w-full max-w-md bg-slate-900 rounded-3xl p-8 shadow-2xl">
 
-                <form
-                    onSubmit={handleRegister}
-                    className="space-y-5 mt-8"
-                >
+        <h1 className="text-4xl font-bold text-white text-center">
+          Create Account
+        </h1>
 
-                    <input
-                        name="name"
-                        type="text"
-                        required
-                        placeholder="Full Name"
-                        className="w-full p-4 rounded-xl bg-slate-800 text-white outline-none"
-                    />
+        <p className="text-center text-gray-400 mt-2">
+          Register to access the portfolio
+        </p>
 
-                    <input
-                        name="email"
-                        type="email"
-                        required
-                        placeholder="Email"
-                        className="w-full p-4 rounded-xl bg-slate-800 text-white outline-none"
-                    />
+        <form onSubmit={handleRegister} className="space-y-5 mt-8">
 
-                    <div className="relative">
+          <input
+            type="text"
+            name="name"
+            required
+            placeholder="Full Name"
+            className="w-full p-4 rounded-xl bg-slate-800 text-white outline-none"
+          />
 
-                        <input
-                            name="password"
-                            type={showPassword ? "text" : "password"}
-                            required
-                            placeholder="Password"
-                            className="w-full p-4 rounded-xl bg-slate-800 text-white outline-none"
-                        />
+          <input
+            type="email"
+            name="email"
+            required
+            placeholder="Email Address"
+            className="w-full p-4 rounded-xl bg-slate-800 text-white outline-none"
+          />
 
-                        <button
-                            type="button"
-                            onClick={() =>
-                                setShowPassword(!showPassword)
-                            }
-                            className="absolute right-5 top-5 text-gray-400"
-                        >
-                            {showPassword ? (
-                                <FaEyeSlash />
-                            ) : (
-                                <FaEye />
-                            )}
-                        </button>
+          <div className="relative">
 
-                    </div>
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              required
+              placeholder="Password"
+              className="w-full p-4 rounded-xl bg-slate-800 text-white outline-none"
+            />
 
-                    <input
-                        name="confirmPassword"
-                        type="password"
-                        required
-                        placeholder="Confirm Password"
-                        className="w-full p-4 rounded-xl bg-slate-800 text-white outline-none"
-                    />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-5 top-5 text-gray-400"
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
 
-                    {error && (
-                        <p className="text-red-500 text-sm">
-                            {error}
-                        </p>
-                    )}
+          </div>
 
-                    <button
-                        className="w-full bg-cyan-500 hover:bg-cyan-600 py-4 rounded-xl text-white font-semibold"
-                    >
-                        Register
-                    </button>
+          <input
+            type="password"
+            name="confirmPassword"
+            required
+            placeholder="Confirm Password"
+            className="w-full p-4 rounded-xl bg-slate-800 text-white outline-none"
+          />
 
-                </form>
+          {error && (
+            <p className="text-red-500 text-sm">{error}</p>
+          )}
 
-                <button
-                    onClick={handleGoogleRegister}
-                    className="w-full mt-5 border border-cyan-500 py-4 rounded-xl text-white flex justify-center items-center gap-3 hover:bg-cyan-500 transition"
-                >
-                    <FaGoogle />
-                    Continue with Google
-                </button>
+          <button
+            type="submit"
+            className="w-full bg-cyan-500 hover:bg-cyan-600 py-4 rounded-xl text-white font-semibold transition"
+          >
+            Register
+          </button>
 
-                <p className="text-center text-gray-400 mt-8">
+        </form>
 
-                    Already have an account?
+        <button
+          onClick={handleGoogleRegister}
+          className="w-full mt-5 border border-cyan-500 py-4 rounded-xl text-white flex justify-center items-center gap-3 hover:bg-cyan-500 transition"
+        >
+          <FaGoogle />
+          Continue with Google
+        </button>
 
-                    <Link
-                        to="/login"
-                        className="text-cyan-400 ml-2"
-                    >
-                        Login
-                    </Link>
+        <p className="text-center text-gray-400 mt-8">
+          Already have an account?
 
-                </p>
+          <Link
+            to="/login"
+            className="text-cyan-400 ml-2"
+          >
+            Login
+          </Link>
+        </p>
 
-            </div>
-
-        </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default Register;
