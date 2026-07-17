@@ -39,6 +39,28 @@ function App() {
           }
         />
 
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <div className="min-h-screen bg-slate-950 text-white flex justify-center items-center text-5xl">
+                Dashboard
+              </div>
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <div className="min-h-screen bg-slate-950 text-white flex justify-center items-center text-5xl">
+                My Profile
+              </div>
+            </PrivateRoute>
+          }
+        />
+
       </Routes>
 
     </BrowserRouter>

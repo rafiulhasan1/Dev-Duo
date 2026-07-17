@@ -1,4 +1,6 @@
 import { createContext, useEffect, useState } from "react";
+import { getFirestore, doc, setDoc, serverTimestamp } from "firebase/firestore";
+import app from "../firebase/firebase.config";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -15,6 +17,8 @@ import { auth } from "../firebase/firebase.config";
 export const AuthContext = createContext();
 
 const googleProvider = new GoogleAuthProvider();
+
+const db = getFirestore(app);
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
