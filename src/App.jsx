@@ -8,6 +8,7 @@ import Register from "./Pages/Register";
 import MemberDetails from "./Pages/MemberDetails";
 
 import PrivateRoute from "./Routes/PrivateRoute";
+import MyProfile from "./Pages/MyProfile";
 
 function App() {
   return (
@@ -55,7 +56,7 @@ function App() {
           element={
             <PrivateRoute>
               <div className="min-h-screen bg-slate-950 text-white flex justify-center items-center text-5xl">
-                My Profile
+                <MyProfile/>
               </div>
             </PrivateRoute>
           }
