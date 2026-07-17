@@ -9,10 +9,13 @@ import MemberDetails from "./Pages/MemberDetails";
 
 import PrivateRoute from "./Routes/PrivateRoute";
 import MyProfile from "./Pages/MyProfile";
+import SessionTimeout from "./Components/SessionTimeout";
 
 function App() {
   return (
     <BrowserRouter>
+
+      <SessionTimeout />
 
       <Navbar />
 
@@ -55,9 +58,7 @@ function App() {
           path="/profile"
           element={
             <PrivateRoute>
-              <div className="min-h-screen bg-slate-950 text-white flex justify-center items-center text-5xl">
-                <MyProfile/>
-              </div>
+              <MyProfile />
             </PrivateRoute>
           }
         />
