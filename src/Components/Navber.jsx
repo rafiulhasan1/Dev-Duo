@@ -1,94 +1,105 @@
 import { useState } from "react";
 import { HiOutlineMenuAlt3 } from "react-icons/hi";
 import { IoClose } from "react-icons/io5";
+import { useContext } from "react";
+import { AuthContext } from "../Provider/AuthProvider";
 
 const Navbar = () => {
 
-const [open,setOpen]=useState(false)
+    const [open, setOpen] = useState(false)
 
-const menus=[
-"Home",
-"About",
-"Skills",
-"Projects",
-"Contact"
-]
+    const { user } = useContext(AuthContext);
 
-return (
+    const menus = [
+        "Home",
+        "About",
+        "Skills",
+        "Projects",
+        "Contact"
+    ]
 
-<nav className="fixed w-full z-50 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800">
+    return (
 
-<div className="max-w-7xl mx-auto px-6">
+        <nav className="fixed w-full z-50 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800">
 
-<div className="flex justify-between items-center h-20">
+            <div className="max-w-7xl mx-auto px-6">
 
-<h1 className="text-3xl font-bold text-cyan-400">
-Dev Duo
-</h1>
+                <div className="flex justify-between items-center h-20">
 
-<ul className="hidden md:flex gap-8 text-white">
+                    <h1 className="text-3xl font-bold text-cyan-400">
+                        Dev Duo
+                        {
+                            user && (
+                                <h2 className="text-white font-semibold">
+                                    {user.displayName}
+                                </h2>
+                            )
+                        }
+                    </h1>
 
-{
-menus.map(menu=>
+                    <ul className="hidden md:flex gap-8 text-white">
 
-<li key={menu}>
-<a
-href={`#${menu.toLowerCase()}`}
-className="hover:text-cyan-400 duration-300"
->
-{menu}
-</a>
-</li>
+                        {
+                            menus.map(menu =>
 
-)
-}
+                                <li key={menu}>
+                                    <a
+                                        href={`#${menu.toLowerCase()}`}
+                                        className="hover:text-cyan-400 duration-300"
+                                    >
+                                        {menu}
+                                    </a>
+                                </li>
 
-</ul>
+                            )
+                        }
 
-<button
-className="md:hidden text-3xl text-white"
-onClick={()=>setOpen(!open)}
->
+                    </ul>
 
-{
-open ? <IoClose/> : <HiOutlineMenuAlt3/>
-}
+                    <button
+                        className="md:hidden text-3xl text-white"
+                        onClick={() => setOpen(!open)}
+                    >
 
-</button>
+                        {
+                            open ? <IoClose /> : <HiOutlineMenuAlt3 />
+                        }
 
-</div>
+                    </button>
 
-</div>
+                </div>
 
-{
-open &&
+            </div>
 
-<div className="md:hidden bg-slate-900">
+            {
+                open &&
 
-{
-menus.map(menu=>
+                <div className="md:hidden bg-slate-900">
 
-<a
-key={menu}
-href={`#${menu.toLowerCase()}`}
-className="block px-6 py-5 text-white border-b border-slate-700 hover:bg-slate-800"
-onClick={()=>setOpen(false)}
->
+                    {
+                        menus.map(menu =>
 
-{menu}
+                            <a
+                                key={menu}
+                                href={`#${menu.toLowerCase()}`}
+                                className="block px-6 py-5 text-white border-b border-slate-700 hover:bg-slate-800"
+                                onClick={() => setOpen(false)}
+                            >
 
-</a>
+                                {menu}
 
-)
-}
+                            </a>
 
-</div>
+                        )
+                    }
 
-}
+                </div>
 
-</nav>
+            }
 
-)
+        </nav>
+
+    )
 
 }
 
