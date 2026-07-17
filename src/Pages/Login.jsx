@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../Provider/AuthProvider";
 import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
@@ -21,9 +21,26 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const [failedAttempts, setFailedAttempts] = useState(0);
+    const [lockTime, setLockTime] = useState(0);
+
+    useEffect(() => {
+        if (lockTime <= 0) return;
+
+        const timer = setInterval(() => {
+            setLockTime((prev) => prev - 1);
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [lockTime]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
+
+        if (lockTime > 0) {
+            setError(`Too many failed attempts. Try again after ${lockTime} seconds.`);
+            return;
+        }
 
         setError("");
         setSuccess("");
@@ -44,10 +61,31 @@ const Login = () => {
 
                 return;
             }
-
+            setFailedAttempts(0);
+            setLockTime(0);
             navigate(from);
         } catch (err) {
-            setError(err.message);
+
+            const attempts = failedAttempts + 1;
+
+            setFailedAttempts(attempts);
+
+            if (attempts >= 3) {
+
+                setLockTime(30);
+
+                setFailedAttempts(0);
+
+                setError("Too many failed attempts. Login locked for 30 seconds.");
+
+            } else {
+
+                setError(
+                    `Invalid email or password. ${3 - attempts} attempt(s) remaining.`
+                );
+
+            }
+
         }
     };
 
@@ -163,9 +201,15 @@ const Login = () => {
 
                     <button
                         type="submit"
-                        className="w-full bg-cyan-500 hover:bg-cyan-600 text-white py-4 rounded-xl font-semibold transition"
+                        disabled={lockTime > 0}
+                        className={`w-full py-4 rounded-xl font-semibold transition ${lockTime > 0
+                                ? "bg-gray-600 cursor-not-allowed"
+                                : "bg-cyan-500 hover:bg-cyan-600 text-white"
+                            }`}
                     >
-                        Login
+                        {lockTime > 0
+                            ? `Locked (${lockTime}s)`
+                            : "Login"}
                     </button>
 
                 </form>
