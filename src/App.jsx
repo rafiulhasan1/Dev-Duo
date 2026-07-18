@@ -11,10 +11,13 @@ import PrivateRoute from "./Routes/PrivateRoute";
 import MyProfile from "./Pages/MyProfile";
 import SessionTimeout from "./Components/SessionTimeout";
 import SecurityDashboard from "./Pages/SecurityDashboard";
+import ScrollToTop from "./Components/ScrollToTop";
 
 function App() {
   return (
     <BrowserRouter>
+
+      <ScrollToTop />
 
       <SessionTimeout />
 

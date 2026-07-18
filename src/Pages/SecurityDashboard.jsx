@@ -9,6 +9,7 @@ import {
     FaLock,
     FaGoogle,
     FaEnvelope,
+    FaArrowCircleRight
 } from "react-icons/fa";
 
 const SecurityDashboard = () => {
@@ -174,7 +175,7 @@ const SecurityDashboard = () => {
 
                             </div>
 
-                            <p className="mt-3 text-cyan-400 font-bold text-3xl">
+                            <p className="mt-3 text-cyan-400 font-bold text-2xl">
                                 95 / 100
                             </p>
 
@@ -182,12 +183,22 @@ const SecurityDashboard = () => {
 
                     </div>
 
-                    <div  className="bg-slate-900 rounded-2xl p-6">
-                        <p className="text-gray-400">
-                            {userData?.lastLogin
-                                ? userData.lastLogin.toDate().toLocaleString()
-                                : "First Login"}
-                        </p>
+                    <div className="bg-slate-900 rounded-2xl p-6">
+                        <div className="flex items-center gap-3">
+
+                            <FaArrowCircleRight className="text-green-400 text-2xl" />
+
+                            <div>
+                                <p className="font-semibold text-xl mb-1">
+                                    Last Login
+                                </p>
+                                <p className="text-gray-400">
+                                    {userData?.lastLogin
+                                        ? userData.lastLogin.toDate().toLocaleString()
+                                        : "First Login"}
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
                 </div>

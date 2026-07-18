@@ -24,7 +24,7 @@ const Contact = () => {
 
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12 mt-20">
+        <div className="w-2/4 mx-auto gap-12 mt-20">
 
           {/* Left */}
 
@@ -46,7 +46,7 @@ const Contact = () => {
 
                   <p className="text-gray-400">
 
-                    contact@example.com
+                    rhasan@devduo.com
 
                   </p>
 
@@ -72,7 +72,7 @@ const Contact = () => {
 
                   <p className="text-gray-400">
 
-                    +880 1700 000000
+                    +880 1304260174
 
                   </p>
 
@@ -112,7 +112,7 @@ const Contact = () => {
 
           {/* Right */}
 
-          <div>
+          {/* <div>
 
             <form className="bg-slate-900 rounded-3xl p-8">
 
@@ -148,7 +148,7 @@ const Contact = () => {
 
             </form>
 
-          </div>
+          </div> */}
 
         </div>
 
