@@ -2,6 +2,8 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../Provider/AuthProvider";
 import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
+import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "../firebase/firebase.config";
 
 const Login = () => {
     const {
@@ -61,6 +63,11 @@ const Login = () => {
 
                 return;
             }
+
+            await updateDoc(doc(db, "users", result.user.uid), {
+                lastLogin: serverTimestamp(),
+            });
+
             setFailedAttempts(0);
             setLockTime(0);
             navigate(from);
@@ -94,6 +101,10 @@ const Login = () => {
 
         try {
             await googleLogin();
+
+            await updateDoc(doc(db, "users", result.user.uid), {
+                lastLogin: serverTimestamp(),
+            });
 
             navigate(from);
         } catch (err) {
@@ -203,8 +214,8 @@ const Login = () => {
                         type="submit"
                         disabled={lockTime > 0}
                         className={`w-full py-4 rounded-xl font-semibold transition ${lockTime > 0
-                                ? "bg-gray-600 cursor-not-allowed"
-                                : "bg-cyan-500 hover:bg-cyan-600 text-white"
+                            ? "bg-gray-600 cursor-not-allowed"
+                            : "bg-cyan-500 hover:bg-cyan-600 text-white"
                             }`}
                     >
                         {lockTime > 0

@@ -1,5 +1,7 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../Provider/AuthProvider";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase/firebase.config";
 import {
     FaShieldAlt,
     FaCheckCircle,
@@ -12,6 +14,22 @@ import {
 const SecurityDashboard = () => {
 
     const { user } = useContext(AuthContext);
+
+    const [userData, setUserData] = useState(null);
+
+    useEffect(() => {
+        const loadUser = async () => {
+            if (!user) return;
+
+            const snap = await getDoc(doc(db, "users", user.uid));
+
+            if (snap.exists()) {
+                setUserData(snap.data());
+            }
+        };
+
+        loadUser();
+    }, [user]);
 
     return (
         <div className="min-h-screen bg-slate-950 text-white px-6 py-10 mt-16">
@@ -162,6 +180,14 @@ const SecurityDashboard = () => {
 
                         </div>
 
+                    </div>
+
+                    <div  className="bg-slate-900 rounded-2xl p-6">
+                        <p className="text-gray-400">
+                            {userData?.lastLogin
+                                ? userData.lastLogin.toDate().toLocaleString()
+                                : "First Login"}
+                        </p>
                     </div>
 
                 </div>

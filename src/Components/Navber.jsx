@@ -115,7 +115,7 @@ const Navbar = () => {
 
                     </div>
 
-                    <Link
+                    {/* <Link
                       to="/dashboard"
                       onClick={() =>
                         setProfileMenu(false)
@@ -125,7 +125,7 @@ const Navbar = () => {
                       <FaTachometerAlt />
 
                       Dashboard
-                    </Link>
+                    </Link> */}
 
                     <Link
                       to="/profile"
@@ -145,7 +145,7 @@ const Navbar = () => {
                       className="flex items-center gap-3 px-5 py-4 hover:bg-slate-800 text-white"
                     >
                       <FaShieldAlt />
-                      Security
+                      Security Dashboard
                     </Link>
 
                     <button
@@ -231,7 +231,7 @@ const Navbar = () => {
 
                 </div>
 
-                <Link
+                {/* <Link
                   to="/dashboard"
                   className="block bg-slate-800 text-white p-3 rounded-xl mb-3 text-center"
                   onClick={() =>
@@ -239,7 +239,7 @@ const Navbar = () => {
                   }
                 >
                   Dashboard
-                </Link>
+                </Link> */}
 
                 <Link
                   to="/profile"
@@ -256,7 +256,7 @@ const Navbar = () => {
                   className="block bg-slate-800 text-white p-3 rounded-xl mb-3 text-center"
                   onClick={() => setMobileMenu(false)}
                 >
-                  Security
+                  Security Dashboard
                 </Link>
 
                 <button
