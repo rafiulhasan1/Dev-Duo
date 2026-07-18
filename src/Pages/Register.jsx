@@ -141,7 +141,7 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex justify-center items-center px-5">
+    <div className="min-h-screen bg-slate-950 flex justify-center items-center px-5 mt-20">
       <div className="w-full max-w-md bg-slate-900 rounded-3xl p-8 shadow-2xl">
 
         <h1 className="text-4xl font-bold text-white text-center">

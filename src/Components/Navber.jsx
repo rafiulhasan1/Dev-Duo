@@ -8,6 +8,7 @@ import {
   FaTachometerAlt,
   FaUser,
   FaSignOutAlt,
+  FaShieldAlt,
 } from "react-icons/fa";
 
 import { AuthContext } from "../Provider/AuthProvider";
@@ -27,7 +28,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout()
-      .then(() => {})
+      .then(() => { })
       .catch((err) => console.log(err));
 
     setProfileMenu(false);
@@ -52,9 +53,9 @@ const Navbar = () => {
           {/* Desktop Menu */}
 
           <ul className="hidden lg:flex items-center gap-8 text-white">
-                <Link to="/">
-                    Home
-                </Link>
+            <Link to="/">
+              Home
+            </Link>
             {menus.map((menu) => (
               <li key={menu}>
                 <a
@@ -136,6 +137,15 @@ const Navbar = () => {
                       <FaUser />
 
                       My Profile
+                    </Link>
+
+                    <Link
+                      to="/security"
+                      onClick={() => setProfileMenu(false)}
+                      className="flex items-center gap-3 px-5 py-4 hover:bg-slate-800 text-white"
+                    >
+                      <FaShieldAlt />
+                      Security
                     </Link>
 
                     <button
@@ -239,6 +249,14 @@ const Navbar = () => {
                   }
                 >
                   My Profile
+                </Link>
+
+                <Link
+                  to="/security"
+                  className="block bg-slate-800 text-white p-3 rounded-xl mb-3 text-center"
+                  onClick={() => setMobileMenu(false)}
+                >
+                  Security
                 </Link>
 
                 <button

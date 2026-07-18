@@ -10,6 +10,7 @@ import MemberDetails from "./Pages/MemberDetails";
 import PrivateRoute from "./Routes/PrivateRoute";
 import MyProfile from "./Pages/MyProfile";
 import SessionTimeout from "./Components/SessionTimeout";
+import SecurityDashboard from "./Pages/SecurityDashboard";
 
 function App() {
   return (
@@ -59,6 +60,15 @@ function App() {
           element={
             <PrivateRoute>
               <MyProfile />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/security"
+          element={
+            <PrivateRoute>
+              <SecurityDashboard />
             </PrivateRoute>
           }
         />
