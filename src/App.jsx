@@ -12,6 +12,7 @@ import MyProfile from "./Pages/MyProfile";
 import SessionTimeout from "./Components/SessionTimeout";
 import SecurityDashboard from "./Pages/SecurityDashboard";
 import ScrollToTop from "./Components/ScrollToTop";
+import NotFound from "./Pages/NotFound";
 
 function App() {
   return (
@@ -75,6 +76,8 @@ function App() {
             </PrivateRoute>
           }
         />
+
+        <Route path="*" element={<NotFound/>} />
 
       </Routes>
 
